@@ -11,9 +11,12 @@ Assumes one MCR fit per file
 import json
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 IN_PATH = r'C:/Users/clark/OneDrive - Stony Brook University/Documents/Karen/MCR'
+OUT_PATH = IN_PATH
 FILE = 'Model10.json'
+SAVE_CSV = False
 
 #%% organize project data
 with open(f'{IN_PATH}/{FILE}', 'r') as mcr_proj:
@@ -50,6 +53,7 @@ plt.ylabel('$\mu(E)$')
 plt.title('Data vs Fitted Result')
 plt.show()
 
+# default matplotlib colors
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 for c, rs in zip(colors, S_guess):
@@ -76,3 +80,13 @@ plt.ylim([0,1])
 plt.xlabel('$Time$ $(hours)$')
 plt.title('Fitted Concentration Profiles')
 plt.show()
+
+#%%
+if SAVE_CSV:
+    model_name = FILE.rsplit('.', 1)[0]
+    pd.DataFrame(np.vstack((full_energies, D.T)).T).to_csv(f'{OUT_PATH}/{model_name}_dataset.csv', index=None, header=None)
+    pd.DataFrame(np.vstack((crop_energies, D_fit.T)).T).to_csv(f'{OUT_PATH}/{model_name}_data_fit.csv', index=None, header=None)
+    
+    pd.DataFrame(np.vstack((crop_energies, S_fit.T)).T).to_csv(f'{OUT_PATH}/{model_name}_spectra_fit.csv', index=None, header=None)
+    pd.DataFrame(np.vstack((times, C_fit)).T).to_csv(f'{OUT_PATH}/{model_name}_conc_fit.csv', index=None, header=None)
+
