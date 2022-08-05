@@ -16,7 +16,7 @@ import pandas as pd
 IN_PATH = r'C:/Users/clark/OneDrive - Stony Brook University/Documents/Karen/MCR'
 OUT_PATH = IN_PATH
 FILE = 'Model10.json'
-SAVE_CSV = False
+SAVE_CSV = True
 
 #%% organize project data
 with open(f'{IN_PATH}/{FILE}', 'r') as mcr_proj:
@@ -81,11 +81,16 @@ plt.xlabel('$Time$ $(hours)$')
 plt.title('Fitted Concentration Profiles')
 plt.show()
 
-#%%
+#%% save fit results to csv files
 if SAVE_CSV:
     model_name = FILE.rsplit('.', 1)[0]
     pd.DataFrame(np.vstack((full_energies, D.T)).T).to_csv(f'{OUT_PATH}/{model_name}_dataset.csv', index=None, header=None)
     pd.DataFrame(np.vstack((crop_energies, D_fit.T)).T).to_csv(f'{OUT_PATH}/{model_name}_data_fit.csv', index=None, header=None)
+    
+    for ref_s in S_guess:
+        spectrum = np.array(S_guess[ref_s]['data'])
+        x = np.array(S_guess[ref_s]['x'])
+        pd.DataFrame(np.vstack((x, spectrum)).T).to_csv(f'{OUT_PATH}/{ref_s}.csv', index=None, header=None)
     
     pd.DataFrame(np.vstack((crop_energies, S_fit.T)).T).to_csv(f'{OUT_PATH}/{model_name}_spectra_fit.csv', index=None, header=None)
     pd.DataFrame(np.vstack((times, C_fit)).T).to_csv(f'{OUT_PATH}/{model_name}_conc_fit.csv', index=None, header=None)
